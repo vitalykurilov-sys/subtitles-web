@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Subtitles</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 Real-time Subtitles</h1>
+            <p class="subtitle">Slovenian → English</p>
+        </div>
+
+        <div class="controls">
+            <button id="startBtn" class="btn btn-start">Start Recording</button>
+            <button id="stopBtn" class="btn btn-stop" disabled>Stop Recording</button>
+            <span id="status" class="status">Ready</span>
+        </div>
+
+        <div id="subtitles" class="subtitles">
+            <!-- Субтитры появятся здесь -->
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
