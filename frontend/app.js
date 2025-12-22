@@ -1,7 +1,7 @@
 // WebSocket URL - замените на URL вашего backend на Render
 const WS_URL = window.location.hostname === 'localhost'
     ? 'ws://localhost:8000/ws'
-    : 'wss://your-backend-url.onrender.com/ws'; // Замените после деплоя на Render
+    : 'wss://subtitles-backend-xtrg.onrender.com/ws'; // Render backend URL
 
 let websocket = null;
 let mediaRecorder = null;
