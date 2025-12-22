@@ -52,7 +52,20 @@ def translate_text(text: str, to_lang: str = "en") -> str:
 
 @app.get("/")
 async def root():
-    return {"message": "Subtitles API is running", "status": "ok"}
+    """Health check endpoint"""
+    return {
+        "message": "Subtitles API is running",
+        "status": "ok",
+        "endpoints": {
+            "websocket": "/ws",
+            "health": "/"
+        }
+    }
+
+@app.get("/health")
+async def health():
+    """Simple health check"""
+    return {"status": "healthy"}
 
 
 @app.websocket("/ws")
