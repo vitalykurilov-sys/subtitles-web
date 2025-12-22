@@ -3,27 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-time Subtitles</title>
-    <link rel="stylesheet" href="style.css">
+    <title>OpenTitles - Real-time Subtitles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 72px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 60px;
+            letter-spacing: -2px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .open-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 24px 60px;
+            font-size: 24px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .open-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+
+        .open-btn:active {
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🎤 Real-time Subtitles</h1>
-            <p class="subtitle">Slovenian → English</p>
-        </div>
-
-        <div class="controls">
-            <button id="startBtn" class="btn btn-start">Start Recording</button>
-            <button id="stopBtn" class="btn btn-stop" disabled>Stop Recording</button>
-            <span id="status" class="status">Ready</span>
-        </div>
-
-        <div id="subtitles" class="subtitles">
-            <!-- Субтитры появятся здесь -->
-        </div>
+        <div class="logo">OpenTitles</div>
+        <button class="open-btn" onclick="openSubtitles()">Open Subtitles</button>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        function openSubtitles() {
+            const width = 500;
+            const height = 400;
+            const left = (screen.width - width) / 2;
+            const top = (screen.height - height) / 2;
+
+            window.open(
+                'subtitles.html',
+                'OpenTitles',
+                `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=no`
+            );
+        }
+    </script>
 </body>
 </html>
