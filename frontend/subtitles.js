@@ -1,7 +1,7 @@
 // WebSocket URL
 const WS_URL = window.location.hostname === 'localhost'
     ? 'ws://localhost:8000/ws'
-    : 'wss://subtitles-backend-xtrg.onrender.com/ws';
+    : 'wss://subtitles-backend-rtrg.onrender.com/ws';
 
 let websocket = null;
 let audioContext = null;
