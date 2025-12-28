@@ -92,6 +92,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
         def recognized_callback(evt):
             """Callback для финальных результатов распознавания"""
+            print(f"[Azure] Recognition event: {evt.result.reason}")
             if evt.result.reason == speechsdk.ResultReason.RecognizedSpeech and evt.result.text:
                 text_sl = evt.result.text
                 text_en = translate_text(text_sl, "en")
@@ -100,8 +101,15 @@ async def websocket_endpoint(websocket: WebSocket):
                     results_queue.put({"original": text_sl, "translated": text_en}),
                     loop
                 )
+            elif evt.result.reason == speechsdk.ResultReason.NoMatch:
+                print(f"[Azure] No speech recognized")
+
+        def canceled_callback(evt):
+            """Callback для ошибок"""
+            print(f"[Azure] Recognition canceled: {evt}")
 
         recognizer.recognized.connect(recognized_callback)
+        recognizer.canceled.connect(canceled_callback)
         recognizer.start_continuous_recognition()
 
         # Две асинхронные задачи:
@@ -111,11 +119,15 @@ async def websocket_endpoint(websocket: WebSocket):
         async def receive_audio():
             """Получаем аудио от браузера"""
             try:
+                bytes_count = 0
                 while True:
                     data = await websocket.receive_bytes()
+                    bytes_count += len(data)
+                    if bytes_count % 100000 == 0:  # Log every ~100KB
+                        print(f"[Audio] Received {bytes_count} bytes total")
                     push_stream.write(data)
             except WebSocketDisconnect:
-                print("[WebSocket] Client disconnected")
+                print(f"[WebSocket] Client disconnected (received {bytes_count} bytes total)")
                 push_stream.close()
                 recognizer.stop_continuous_recognition()
 
