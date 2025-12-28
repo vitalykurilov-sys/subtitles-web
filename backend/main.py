@@ -75,6 +75,9 @@ async def websocket_endpoint(websocket: WebSocket):
     print("[WebSocket] Client connected")
 
     try:
+        # Сохраняем event loop для использования в callback
+        loop = asyncio.get_running_loop()
+
         # Настройка Azure Speech
         speech_config = speechsdk.SpeechConfig(subscription=SPEECH_KEY, region=SPEECH_REGION)
         speech_config.speech_recognition_language = "sl-SI"  # Словенский
@@ -92,9 +95,10 @@ async def websocket_endpoint(websocket: WebSocket):
             if evt.result.reason == speechsdk.ResultReason.RecognizedSpeech and evt.result.text:
                 text_sl = evt.result.text
                 text_en = translate_text(text_sl, "en")
+                print(f"[Azure] Recognized: {text_sl} -> {text_en}")
                 asyncio.run_coroutine_threadsafe(
                     results_queue.put({"original": text_sl, "translated": text_en}),
-                    asyncio.get_event_loop()
+                    loop
                 )
 
         recognizer.recognized.connect(recognized_callback)
