@@ -68,7 +68,8 @@ function startRecording() {
     });
 
     const source = audioContext.createMediaStreamSource(audioStream);
-    processor = audioContext.createScriptProcessor(4096, 1, 1);
+    // Увеличиваем размер буфера до 8192 для лучшего распознавания фраз
+    processor = audioContext.createScriptProcessor(8192, 1, 1);
 
     processor.onaudioprocess = (e) => {
         if (websocket && websocket.readyState === WebSocket.OPEN) {
@@ -110,15 +111,10 @@ function addSubtitle(original, translated) {
     const lineDiv = document.createElement('div');
     lineDiv.className = 'subtitle-line';
 
-    const originalDiv = document.createElement('div');
-    originalDiv.className = 'original';
-    originalDiv.textContent = original;
-
     const translatedDiv = document.createElement('div');
     translatedDiv.className = 'translated';
     translatedDiv.textContent = translated;
 
-    lineDiv.appendChild(originalDiv);
     lineDiv.appendChild(translatedDiv);
 
     subtitlesDiv.appendChild(lineDiv);
