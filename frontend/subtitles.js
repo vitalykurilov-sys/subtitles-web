@@ -16,12 +16,12 @@ const errorMsg = document.getElementById('errorMsg');
 // Start recording when play button is clicked
 playBtn.addEventListener('click', async () => {
     try {
-        // Request microphone access
+        // Request microphone access (no filters for virtual devices)
         audioStream = await navigator.mediaDevices.getUserMedia({
             audio: {
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false
             }
         });
 
@@ -67,18 +67,34 @@ function startRecording() {
         sampleRate: 16000
     });
 
+    console.log(`[Audio] AudioContext created, sampleRate: ${audioContext.sampleRate}, state: ${audioContext.state}`);
+
     const source = audioContext.createMediaStreamSource(audioStream);
+    console.log(`[Audio] MediaStreamSource created from stream with ${audioStream.getAudioTracks().length} audio tracks`);
     // Увеличиваем размер буфера до 8192 для лучшего распознавания фраз
     processor = audioContext.createScriptProcessor(8192, 1, 1);
 
+    let sendCount = 0;
     processor.onaudioprocess = (e) => {
         if (websocket && websocket.readyState === WebSocket.OPEN) {
             const inputData = e.inputBuffer.getChannelData(0);
+
+            // Check audio level
+            let maxLevel = 0;
+            for (let i = 0; i < inputData.length; i++) {
+                maxLevel = Math.max(maxLevel, Math.abs(inputData[i]));
+            }
 
             // Convert Float32Array to Int16Array
             const int16Data = new Int16Array(inputData.length);
             for (let i = 0; i < inputData.length; i++) {
                 int16Data[i] = Math.max(-32768, Math.min(32767, inputData[i] * 32768));
+            }
+
+            // Log every 10th send
+            sendCount++;
+            if (sendCount % 10 === 0) {
+                console.log(`[Audio] Sending chunk #${sendCount}, level: ${maxLevel.toFixed(4)}, bytes: ${int16Data.buffer.byteLength}`);
             }
 
             // Send audio data via WebSocket
